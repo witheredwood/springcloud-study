@@ -8,7 +8,7 @@ serve:
 spring:
   profiles: dev
   application:
-    name: springcloud-config-clint
+    name: springcloud-provider-dept
 
 # Eureka 配置
 eureka:
@@ -23,7 +23,7 @@ serve:
 spring:
   profiles: test
   application:
-    name: springcloud-config-clint
+    name: springcloud-provider-dept
 
 # Eureka 配置
 eureka:
