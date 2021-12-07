@@ -1,6 +1,7 @@
 # 注册中心服务端配置
 spring:
-  profiles: dev
+  profiles: 
+    active: dev
   
 ---
 serve:
