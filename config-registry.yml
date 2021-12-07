@@ -4,8 +4,9 @@ spring:
     active: dev
   
 ---
-serve:
+server:
   port: 7001
+
 # spring 配置
 spring:
   profiles: dev
@@ -23,8 +24,9 @@ eureka:
       defaultZone: http://localhost:7001/eureka/,http://localhost:7002/eureka/,http://localhost:7003/eureka/
 
 ---
-serve:
+server:
   port: 7001
+  
 # spring 配置
 spring:
   profiles: test
