@@ -1,4 +1,5 @@
-server:
+# 微服务端配置
+spring:
   profiles:
     active: dev
 
