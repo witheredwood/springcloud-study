@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/module1-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module10-provider-hystrix-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module11-consumer-hystrix-dashboard-9001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module11-provider-hystrix-dashboard-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module12-zuul-9527/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module13-config-client-3355/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module13-config-registry-7001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module13-config-server-3344/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module13-config-service-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module2-provider-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module3-consumer-80/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module4-eureka-7001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module5-provider-eureka-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module6-eureka-7001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module6-eureka-7002/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module6-eureka-7003/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module7-consumer-ribbon-80/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module8-provider-eureka-8002/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module8-provider-eureka-8003/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module9-api-feign/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module9-consumer-feign-80/src/main/java" charset="UTF-8" />
+  </component>
+</project>

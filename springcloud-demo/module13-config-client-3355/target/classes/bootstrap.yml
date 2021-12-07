@@ -1,0 +1,15 @@
+# 系统级别的配置
+
+# 读取远程仓库中的配置
+spring:
+  # 连接 config 服务端读取远程的配置
+  cloud:
+    config:
+      uri: http://loalhost:3344  # config 服务端地址，不是git的地址
+      name: config-client  # 读取的远程文件的名字
+      label: main  # 读取的远程文件所在的分支名
+      profile: dev # 读取的远程文件中 dev 环境的配置
+
+
+
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="module13-config-registry-7001" />
+        <module name="module6-eureka-7003" />
+        <module name="module2-provider-8001" />
+        <module name="module10-provider-hystrix-8001" />
+        <module name="module13-config-service-8001" />
+        <module name="module7-consumer-ribbon-80" />
+        <module name="module12-zuul-9527" />
+        <module name="module8-provider-eureka-8003" />
+        <module name="module8-provider-eureka-8002" />
+        <module name="module13-config-server-3344" />
+        <module name="module9-api-feign" />
+        <module name="module13-config-client-3355" />
+        <module name="module6-eureka-7001" />
+        <module name="module3-consumer-80" />
+        <module name="module11-consumer-hystrix-dashboard-9001" />
+        <module name="module11-provider-hystrix-dashboard-8001" />
+        <module name="module9-consumer-feign-80" />
+        <module name="module5-provider-eureka-8001" />
+        <module name="module6-eureka-7002" />
+        <module name="module4-eureka-7001" />
+        <module name="module1-api" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="module8-provider-eureka-8001" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="module1-api" options="-parameters" />
+      <module name="module10-provider-hystrix-8001" options="-parameters" />
+      <module name="module11-consumer-hystrix-dashboard-9001" options="-parameters" />
+      <module name="module11-provider-hystrix-dashboard-8001" options="-parameters" />
+      <module name="module12-zuul-9527" options="-parameters" />
+      <module name="module13-config-client-3355" options="-parameters" />
+      <module name="module13-config-registry-7001" options="-parameters" />
+      <module name="module13-config-server-3344" options="-parameters" />
+      <module name="module13-config-service-8001" options="-parameters" />
+      <module name="module2-provider-8001" options="-parameters" />
+      <module name="module3-consumer-80" options="-parameters" />
+      <module name="module4-eureka-7001" options="-parameters" />
+      <module name="module5-provider-eureka-8001" options="-parameters" />
+      <module name="module6-eureka-7001" options="-parameters" />
+      <module name="module6-eureka-7002" options="-parameters" />
+      <module name="module6-eureka-7003" options="-parameters" />
+      <module name="module7-consumer-ribbon-80" options="-parameters" />
+      <module name="module8-provider-eureka-8001" options="-parameters" />
+      <module name="module8-provider-eureka-8002" options="-parameters" />
+      <module name="module8-provider-eureka-8003" options="-parameters" />
+      <module name="module9-api-feign" options="-parameters" />
+      <module name="module9-consumer-feign-80" options="-parameters" />
+    </option>
+  </component>
+</project>

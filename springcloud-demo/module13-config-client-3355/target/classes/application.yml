@@ -1,0 +1,13 @@
+server:
+  port: 3355
+
+# spring 配置
+spring:
+  application:
+    name: springcloud-config-client
+
+# Eureka 配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/

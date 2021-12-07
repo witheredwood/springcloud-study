@@ -84,6 +84,10 @@ spring cloud 是微服务架构的一种解决方案。
 
 ## 微服务
 
+**架构图**
+
+![cloud-diagram](https://gitee.com/withered-wood/picture/raw/master/20211207102328.svg)
+
 **优点：**
 
 - 单一职责原则
@@ -999,11 +1003,487 @@ public class module13_config_3344 {
 
 **Step4 启动查看是否成功**
 
+向远程git仓库中添加一个测试文件 `application.yaml` ，测试内容如下：
+
+```yaml
+spring:
+  profiles:
+    active: dev
+
+---
+spring:
+  profiles: dev
+  application:
+    name: springcloud-config-dev
+
+---
+spring:
+  profiles: dev
+  application:
+    name: springcloud-config-test
+
+
+```
+
+**Step5 启动查看是否成功**
+
+spring cloud config 的 Github 地址： `https://github.com/spring-cloud-samples/configserver`
+
+启动 `module13-config-server-3344` ，查看网址 `http://localhost:3344/application/dev/main `  （`application` 文件，`dev` 环境 ，`main` 分支）：可以获取数据
+
+```
+{"name":"application","profiles":["dev"],"label":"main","version":"4aac24af0af706b419dc48d0cb67dfe369295b4c","state":null,"propertySources":[{"name":"https://github.com/witheredwood/springcloud-study.git/application.yaml (document #2)","source":{"spring.profiles":"dev","spring.application.name":"springcloud-config-test"}},{"name":"https://github.com/witheredwood/springcloud-study.git/application.yaml (document #1)","source":{"spring.profiles":"dev","spring.application.name":"springcloud-config-dev"}},{"name":"https://github.com/witheredwood/springcloud-study.git/application.yaml (document #0)","source":{"spring.profiles.active":"dev"}}]}
+```
+
+ 如果可以看到 dev 的配置，就成功了。
+
+如果查看网址 `http://localhost:3344/application.yaml` ，是没有显示内容。
+
+如果文件是在github上，有时候会因为网络连接不上github。
+
 ### 客户端连接服务端
 
+客户端连接 config 的 服务端，通过服务端读取远程的配置。
 
+提前将这次需要的文件 `config-client.yml` 提交到远程仓库中， `config-client.yml` 内容如下：
+
+```yml
+spring:
+  profiles: 
+    active: dev
+  
+---
+server:
+  port: 8201
+  
+# spring 配置
+spring:
+  profiles: dev
+  application:
+    name: springcloud-provider-dept
+
+# Eureka 配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/
+
+---
+server:
+  port: 8202
+  
+# spring 配置
+spring:
+  profiles: test
+  application:
+    name: springcloud-provider-dept
+
+# Eureka 配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/
+```
+
+**Step1 导入依赖**
+
+```xml
+<dependencies>
+    <!-- config -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-config</artifactId>
+    </dependency>
+    <!-- eureka -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-eureka</artifactId>
+        <version>1.4.7.RELEASE</version>
+    <!-- 监控信息 -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+```
+
+**Step2 编写配置文件**
+
+`bootstrap.yml` 是系统级别的配置文件， `application.yaml`  是应用级别的配置文件。
+
+在 `bootstrap.yaml` 中添加以下代码
+
+```yaml
+# 读取远程仓库中的配置
+spring:
+  # 连接 config 服务端读取远程的配置
+  cloud:
+    config:
+      uri: http://loalhost:3344  # config 服务端地址，不是git的地址
+      name: config-client  # 读取的远程文件的名字
+      label: main  # 读取的远程文件所在的分支名
+      profile: dev # 读取的远程文件中 dev 环境的配置
+```
+
+在 `application.yaml` 中添加以下代码
+
+```yaml
+server:
+  port: 3355
+
+# spring 配置
+spring:
+  application:
+    name: springcloud-config-client
+
+# Eureka 配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/
+```
+
+**Step3 编写controller获取数据**
+
+在类 `ConfigClientController` 中添加
+
+```java
+@RestController
+public class ConfigClientController {
+    @Value("${spring.application.name}")
+    private String applicationName;  // 应用名
+
+    @Value("${eureka.client.service-url.defaultZone}")
+    private String eurekaServer;  // eureka 服务端地址
+
+    @Value("${server.port}")
+    private String port;  // 端口号
+
+    @GetMapping("/config")
+    public String getConfig() {
+        return "applicationName: " + applicationName
+                + "\neurekaServer: " + eurekaServer
+                + "\nport: " + port;
+    }
+}
+```
+
+**Step4 启动查看是否成功**
+
+spring cloud config Github 地址： `https://github.com/spring-cloud-samples/configserver`
+
+- 启动 `module13-config-server-3344` ，查看 `http://localhost:3344/config-client/dev/main` 是否正常访问。服务端正常访问后，就趁热打铁测试 config 客户端是否正常。
+- 启动 `module13-config-client-3355` ，查看 `http://localhost:3355/config` 是否显示远程文件中的配置
 
 ### 远程配置
+
+#### 将注册中心的配置文件放到远程
+
+**Step1 编写注册中的配置文件**
+
+编写注册中的配置文件 `config-registry.yml` ，并提交到远程仓库中， `config-registry.yml` 内容如下：
+
+```yml
+# 注册中心服务端配置
+spring:
+  profiles: 
+    active: dev
+  
+---
+server:
+  port: 7001
+
+# spring 配置
+spring:
+  profiles: dev
+  application:
+    name: springcloud-registry
+
+# Eureka 配置
+eureka:
+  instance:
+    hostname: localhost  # Eureka 服务端实例名字
+  client:
+    fetch-registry: false  # 自己是注册中心
+    register-with-eureka: false # 不需要向注册中心注册自己
+    service-url:  # 监控页面
+      defaultZone: http://localhost:7001/eureka/,http://localhost:7002/eureka/,http://localhost:7003/eureka/
+
+---
+server:
+  port: 7001
+  
+# spring 配置
+spring:
+  profiles: test
+  application:
+    name: springcloud-registry
+
+# Eureka 配置
+eureka:
+  client:
+    fetch-registry: false  # 自己是注册中心
+    register-with-eureka: false # 不需要向注册中心注册自己
+    service-url:
+      defaultZone: http://localhost:7001/eureka/,http://localhost:7002/eureka/,http://localhost:7003/eureka/
+```
+
+**Step2 导入依赖**
+
+```xml
+<dependencies>
+    <!-- config -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-config</artifactId>
+    </dependency>
+    <!-- Eureka -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        <version>2.2.9.RELEASE</version>
+    </dependency>
+    <!-- 热部署 -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+    </dependency>
+</dependencies>
+```
+
+**Step3 编写配置文件**
+
+`bootstrap.yml` 是系统级别的配置文件， `application.yaml`  是应用级别的配置文件。
+
+在 `bootstrap.yaml` 中添加以下代码
+
+```yaml
+# 读取远程仓库中的配置
+spring:
+  # 连接 config 服务端读取远程的配置
+  cloud:
+    config:
+      uri: http://loalhost:3344  # config 服务端地址，不是git的地址
+      name: config-registry  # 读取的远程文件的名字
+      label: main  # 读取的远程文件所在的分支名
+      profile: dev # 读取的远程文件中 dev 环境的配置
+```
+
+在 `application.yaml` 中添加以下代码
+
+```yaml
+spring:
+  application:
+    name: springcloud-registry-config
+```
+
+**Step4 启动查看是否成功**
+
+spring cloud config 官方Github 地址： `https://github.com/spring-cloud-samples/configserver`
+
+- 启动 `module13-config-server-3344` ，查看 `http://localhost:3344/config-registry/dev/main` 是否正常访问。服务端正常访问后，就趁热打铁测试 config 客户端是否正常。
+- 启动 `module13-config-registry-7001` ，查看 `http://localhost:7001` 。如果可以正常访问7001，则成功。
+
+#### 将服务的配置文件放到远程
+
+**Step1 编写注册中的配置文件**
+
+编写注册中的配置文件 `config-service.yml` ，并提交到远程仓库中， `config-service.yml` 内容如下：
+
+```yml
+spring:
+  profiles:
+    active: dev
+
+---
+server:
+  port: 8001
+
+# mybatis 配置
+mybatis:
+  type-aliases-package: com.withered.pojo
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+
+# spring 配置
+spring:
+  profiles: dev
+  application:
+    name: springcloud-provider-dept
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/clouddemo1?userUnicode=true&characterEncoding=utf-8&serverTimeZone=UTC
+    username: root
+    password: 1234567
+
+# eureka 配置
+eureka:
+  client:
+    service-url:
+      # 单机
+      #defaultZone: http://localhost:7001/eureka/
+      # 集群
+      defaultZone: http://localhost:7001/eureka/,http://localhost:7002/eureka/,http://localhost:7003/eureka/
+      #defaultZone: http://eureka1.com:7001/eureka/,http://eureka2.com:7002/eureka/,http://eureka3.com:7003/eureka/
+  instance:
+    instance-id: springcloud-provider-eureka-8001
+
+# info 配置
+info:
+  app.name: withered-springcloud
+  company.name: withered.com
+
+---
+server:
+  port: 8001
+
+# mybatis 配置
+mybatis:
+  type-aliases-package: com.withered.pojo
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+
+# spring 配置
+spring:
+  profiles: test
+  application:
+    name: springcloud-provider-dept
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/clouddemo2?userUnicode=true&characterEncoding=utf-8&serverTimeZone=UTC
+    username: root
+    password: 1234567
+
+# eureka 配置
+eureka:
+  client:
+    service-url:
+      # 单机
+      #defaultZone: http://localhost:7001/eureka/
+      # 集群
+      defaultZone: http://localhost:7001/eureka/,http://localhost:7002/eureka/,http://localhost:7003/eureka/
+      #defaultZone: http://eureka1.com:7001/eureka/,http://eureka2.com:7002/eureka/,http://eureka3.com:7003/eureka/
+  instance:
+    instance-id: springcloud-provider-eureka-8001
+
+# info 配置
+info:
+  app.name: withered-springcloud
+  company.name: withered.com
+```
+
+**Step2 导入依赖**
+
+```xml
+<dependencies>
+    <!-- config -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-config</artifactId>
+    </dependency>
+    <!-- Eureka -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-eureka</artifactId>
+        <version>1.4.7.RELEASE</version>
+    </dependency>
+    <!-- 监控信息 -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <!-- 自定义的实体类 -->
+    <dependency>
+        <groupId>org.withered</groupId>
+        <artifactId>module1-api</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <!-- spring boot -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-test</artifactId>
+    </dependency>
+    <!-- 测试 -->
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+    </dependency>
+    <!-- 数据库 -->
+    <dependency>
+        <groupId>com.ibeetl</groupId>
+        <artifactId>mysql</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+    </dependency>
+    <!-- jetty -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jetty</artifactId>
+    </dependency>
+    <!-- 热部署 -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+    </dependency>
+</dependencies>a
+```
+
+**Step3 编写配置文件**
+
+`bootstrap.yml` 是系统级别的配置文件， `application.yaml`  是应用级别的配置文件。
+
+在 `bootstrap.yaml` 中添加以下代码
+
+```yaml
+# 读取远程仓库中的配置
+spring:
+  cloud:
+    config:
+      uri: http://localhost:3344  # config 服务端地址，不是git的地址
+      name: config-service  # 读取的远程文件的名字
+      label: main  # 读取的远程文件中 dev 环境的配置
+      profile: dev  # 读取的远程文件所在的分支名
+```
+
+在 `application.yaml` 中添加以下代码
+
+```yaml
+spring:
+  application:
+    name: springcloud-service-config
+```
+
+**Step4 启动查看是否成功**
+
+spring cloud config 官方Github 地址： `https://github.com/spring-cloud-samples/configserver`
+
+- 启动 `module13-config-server-3344` ，查看 `http://localhost:3344/config-service/dev/main` 是否正常访问。服务端正常访问后，就趁热打铁测试 config 客户端是否正常。
+- 启动 `module13-config-service-8001` ，查看 `http://localhost:8001/dept/list` 。如果可以显示数据库数据，则成功。
 
 
 
